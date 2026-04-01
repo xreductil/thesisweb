@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>評論管理後台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .admin-header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .admin-header h1 { font-size: 1.2rem; }
+        .admin-header span { font-size: 0.85rem; opacity: 0.7; }
+        .logout-btn {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: none;
+            padding: 0.45rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover { background: rgba(255,255,255,0.25); }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            gap: 1rem;
+            padding: 1.2rem 2rem;
+            background: #fff;
+            border-bottom: 1px solid #e8e8e8;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 0.7rem 1.5rem;
+            min-width: 100px;
+        }
+        .stat-item .num { font-size: 1.6rem; font-weight: 700; color: #2c3e50; }
+        .stat-item .label { font-size: 0.78rem; color: #888; margin-top: 0.2rem; }
+
+        /* Filter bar */
+        .filter-bar {
+            padding: 1rem 2rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 0.4rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.88rem;
+            transition: all 0.2s;
+        }
+        .filter-btn.active {
+            background: #4a90e2;
+            color: white;
+            border-color: #4a90e2;
+        }
+        .filter-btn:hover:not(.active) { border-color: #4a90e2; color: #4a90e2; }
+
+        /* Review cards */
+        .reviews-container {
+            padding: 0 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            max-width: 900px;
+        }
+        .review-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 1.2rem 1.4rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: opacity 0.2s;
+        }
+        .review-card.hidden-review {
+            opacity: 0.5;
+            border-left: 3px solid #ccc;
+        }
+        .review-left { flex: 1; }
+        .review-stars { color: #f5a623; font-size: 1.1rem; margin-bottom: 0.4rem; }
+        .review-content {
+            font-size: 0.97rem;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+            white-space: pre-wrap;
+        }
+        .review-meta {
+            font-size: 0.8rem;
+            color: #aaa;
+            display: flex;
+            gap: 1rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-visible { background: #e8f5e9; color: #2e7d32; }
+        .badge-hidden  { background: #fce4ec; color: #c62828; }
+
+        /* Action buttons */
+        .review-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        .btn-toggle, .btn-delete {
+            padding: 0.4rem 0.9rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .btn-toggle {
+            background: #f0f4ff;
+            color: #4a90e2;
+            border: 1px solid #c5d8f8;
+        }
+        .btn-toggle:hover { background: #dce9ff; }
+        .btn-delete {
+            background: #fff0f0;
+            color: #e74c3c;
+            border: 1px solid #f8c5c5;
+        }
+        .btn-delete:hover { background: #ffe0e0; }
+
+        .empty-msg {
+            text-align: center;
+            color: #aaa;
+            padding: 3rem 0;
+            font-size: 0.95rem;
+        }
+
+        /* Delete confirm overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .overlay.show { display: flex; }
+        .confirm-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 340px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+        .confirm-box h3 { font-size: 1.1rem; margin-bottom: 0.8rem; color: #2c3e50; }
+        .confirm-box p { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
+        .confirm-btns { display: flex; gap: 0.8rem; justify-content: center; }
+        .confirm-btns button {
+            padding: 0.55rem 1.4rem;
+            border: none;
+            border-radius: 7px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .btn-cancel { background: #f0f2f5; color: #555; }
+        .btn-confirm-delete { background: #e74c3c; color: white; }
+        .btn-cancel:hover { background: #e2e5ea; }
+        .btn-confirm-delete:hover { background: #c0392b; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-header">
+        <div>
+            <h1>評論管理後台</h1>
+            <span>Y.H.Kao 後台系統</span>
+        </div>
+        <button class="logout-btn" onclick="logout()">登出</button>
+    </div>
+
+    <div class="stats-bar" id="statsBar">
+        <div class="stat-item"><span class="num" id="statTotal">-</span><span class="label">全部評論</span></div>
+        <div class="stat-item"><span class="num" id="statVisible">-</span><span class="label">顯示中</span></div>
+        <div class="stat-item"><span class="num" id="statHidden">-</span><span class="label">已隱藏</span></div>
+        <div class="stat-item"><span class="num" id="statAvg">-</span><span class="label">平均評分</span></div>
+    </div>
+
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="setFilter('all', this)">全部</button>
+        <button class="filter-btn" onclick="setFilter('visible', this)">顯示中</button>
+        <button class="filter-btn" onclick="setFilter('hidden', this)">已隱藏</button>
+    </div>
+
+    <div class="reviews-container" id="reviewsContainer">
+        <p class="empty-msg">載入中…</p>
+    </div>
+
+    <!-- Delete confirm dialog -->
+    <div class="overlay" id="confirmOverlay">
+        <div class="confirm-box">
+            <h3>確認刪除</h3>
+            <p>這則評論將被永久刪除，無法復原。</p>
+            <div class="confirm-btns">
+                <button class="btn-cancel" onclick="closeConfirm()">取消</button>
+                <button class="btn-confirm-delete" onclick="confirmDelete()">確認刪除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allReviews = [];
+        let currentFilter = "all";
+        let pendingDeleteId = null;
+
+        async function logout() {
+            await fetch("/api/admin/logout", { method: "POST" });
+            window.location.href = "/admin";
+        }
+
+        function setFilter(filter, btn) {
+            currentFilter = filter;
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderReviews();
+        }
+
+        function renderReviews() {
+            const container = document.getElementById("reviewsContainer");
+            let filtered = allReviews;
+            if (currentFilter === "visible") filtered = allReviews.filter(r => r.visible);
+            if (currentFilter === "hidden")  filtered = allReviews.filter(r => !r.visible);
+
+            if (filtered.length === 0) {
+                container.innerHTML = "<p class='empty-msg'>沒有符合條件的評論</p>";
+                return;
+            }
+
+            container.innerHTML = filtered.map(r => `
+                <div class="review-card ${r.visible ? "" : "hidden-review"}" id="card-${r.id}">
+                    <div class="review-left">
+                        <div class="review-stars">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</div>
+                        <p class="review-content">${escapeHtml(r.content)}</p>
+                        <div class="review-meta">
+                            <span>${r.created_at}</span>
+                            <span class="badge ${r.visible ? "badge-visible" : "badge-hidden"}">
+                                ${r.visible ? "顯示中" : "已隱藏"}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="review-actions">
+                        <button class="btn-toggle" onclick="toggleReview(${r.id})">
+                            ${r.visible ? "隱藏" : "顯示"}
+                        </button>
+                        <button class="btn-delete" onclick="askDelete(${r.id})">刪除</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function updateStats() {
+            const total = allReviews.length;
+            const visible = allReviews.filter(r => r.visible).length;
+            const hidden = total - visible;
+            const avg = total > 0
+                ? (allReviews.reduce((s, r) => s + r.rating, 0) / total).toFixed(1)
+                : "-";
+            document.getElementById("statTotal").textContent = total;
+            document.getElementById("statVisible").textContent = visible;
+            document.getElementById("statHidden").textContent = hidden;
+            document.getElementById("statAvg").textContent = avg === "-" ? "-" : "★ " + avg;
+        }
+
+        async function loadReviews() {
+            const res = await fetch("/api/admin/reviews");
+            if (res.status === 401) { window.location.href = "/admin"; return; }
+            allReviews = await res.json();
+            updateStats();
+            renderReviews();
+        }
+
+        async function toggleReview(id) {
+            const res = await fetch(`/api/admin/reviews/${id}/toggle`, { method: "PATCH" });
+            if (res.ok) {
+                const data = await res.json();
+                const r = allReviews.find(x => x.id === id);
+                if (r) r.visible = data.visible;
+                updateStats();
+                renderReviews();
+            }
+        }
+
+        function askDelete(id) {
+            pendingDeleteId = id;
+            document.getElementById("confirmOverlay").classList.add("show");
+        }
+
+        function closeConfirm() {
+            pendingDeleteId = null;
+            document.getElementById("confirmOverlay").classList.remove("show");
+        }
+
+        async function confirmDelete() {
+            if (!pendingDeleteId) return;
+            const res = await fetch(`/api/admin/reviews/${pendingDeleteId}`, { method: "DELETE" });
+            if (res.ok) {
+                allReviews = allReviews.filter(r => r.id !== pendingDeleteId);
+                updateStats();
+                renderReviews();
+            }
+            closeConfirm();
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+        }
+
+        // Close overlay on background click
+        document.getElementById("confirmOverlay").addEventListener("click", function(e) {
+            if (e.target === this) closeConfirm();
+        });
+
+        loadReviews();
+    </script>
+</body>
+</html>
