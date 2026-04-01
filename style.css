@@ -283,3 +283,136 @@ footer {
 .service-details li:last-child {
     border-bottom: none;
 }
+
+#reviews {
+    background: #f4f7fb;
+    max-width: 100%;
+    padding: 4rem 2rem;
+}
+
+#reviews h2 {
+    margin-bottom: 2.5rem;
+}
+
+.review-form-wrap {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 2rem;
+    max-width: 680px;
+    margin: 0 auto 3rem;
+}
+
+.review-form-wrap h3 {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-bottom: 1.2rem;
+    text-align: center;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 2.2rem;
+    cursor: pointer;
+    margin-bottom: 0.4rem;
+    color: #ccc;
+}
+
+.star-rating span.hovered,
+.star-rating span.selected {
+    color: #f5a623;
+}
+
+.rating-label {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 1rem;
+}
+
+#reviewForm textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#reviewForm textarea:focus {
+    border-color: #4a90e2;
+}
+
+#reviewForm button {
+    display: block;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#reviewForm button:hover {
+    background: #357abd;
+}
+
+.form-msg {
+    text-align: center;
+    margin-top: 0.7rem;
+    font-size: 0.95rem;
+    min-height: 1.2rem;
+}
+
+.form-msg.success { color: #27ae60; }
+.form-msg.error   { color: #e74c3c; }
+
+.reviews-list {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.review-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.4rem 1.6rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.review-stars {
+    font-size: 1.3rem;
+    color: #f5a623;
+    margin-bottom: 0.5rem;
+}
+
+.review-content {
+    font-size: 1rem;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 0.6rem;
+    white-space: pre-wrap;
+}
+
+.review-date {
+    font-size: 0.82rem;
+    color: #aaa;
+}
+
+.no-reviews, .loading-msg {
+    text-align: center;
+    color: #999;
+    font-size: 0.95rem;
+    padding: 1rem 0;
+}
