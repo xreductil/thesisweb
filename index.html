@@ -12,7 +12,7 @@
             <ul>
                 <li><a href="index.html">首頁</a></li>
                 <li><a href="thesis.html">論文指導</a></li>
-                <li><a href="#reviews">客戶評價</a></li>
+                <li><a href="thesis.html#reviews">客戶評價</a></li>
                 <li><a href="#about">關於我</a></li>
             </ul>
         </nav>
@@ -52,31 +52,6 @@
         </section>
     </main>
 
-    <section id="reviews">
-        <h2>客戶評價</h2>
-
-        <div class="review-form-wrap">
-            <h3>留下您的匿名評論</h3>
-            <form id="reviewForm">
-                <div class="star-rating" id="starRating">
-                    <span data-value="1">★</span>
-                    <span data-value="2">★</span>
-                    <span data-value="3">★</span>
-                    <span data-value="4">★</span>
-                    <span data-value="5">★</span>
-                </div>
-                <p class="rating-label" id="ratingLabel">請選擇評分</p>
-                <textarea id="reviewContent" placeholder="請分享您的經驗與感受…" rows="4" required></textarea>
-                <button type="submit">送出評論</button>
-                <p class="form-msg" id="formMsg"></p>
-            </form>
-        </div>
-
-        <div class="reviews-list" id="reviewsList">
-            <p class="loading-msg">載入評論中…</p>
-        </div>
-    </section>
-
     <footer>
         <h3>立即諮詢</h3>
         <p>💬 LINE: grace843286</p>
@@ -84,87 +59,5 @@
         <p>&copy; 2026 Y.H.Kao All rights reserved.</p>
     </footer>
 
-    <script>
-        let selectedRating = null;
-
-        const stars = document.querySelectorAll("#starRating span");
-        const ratingLabel = document.getElementById("ratingLabel");
-        const labels = ["", "很差", "普通", "還不錯", "很好", "非常好！"];
-
-        stars.forEach(star => {
-            star.addEventListener("mouseover", () => {
-                const val = parseInt(star.dataset.value);
-                stars.forEach(s => s.classList.toggle("hovered", parseInt(s.dataset.value) <= val));
-            });
-            star.addEventListener("mouseout", () => {
-                stars.forEach(s => s.classList.remove("hovered"));
-            });
-            star.addEventListener("click", () => {
-                selectedRating = parseInt(star.dataset.value);
-                stars.forEach(s => s.classList.toggle("selected", parseInt(s.dataset.value) <= selectedRating));
-                ratingLabel.textContent = labels[selectedRating];
-            });
-        });
-
-        async function loadReviews() {
-            const list = document.getElementById("reviewsList");
-            try {
-                const res = await fetch("/api/reviews");
-                const reviews = await res.json();
-                if (reviews.length === 0) {
-                    list.innerHTML = "<p class='no-reviews'>還沒有評論，成為第一個留言的人！</p>";
-                    return;
-                }
-                list.innerHTML = reviews.map(r => `
-                    <div class="review-card">
-                        <div class="review-stars">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</div>
-                        <p class="review-content">${escapeHtml(r.content)}</p>
-                        <p class="review-date">${r.created_at}</p>
-                    </div>
-                `).join("");
-            } catch (e) {
-                list.innerHTML = "<p class='no-reviews'>評論載入失敗，請稍後再試。</p>";
-            }
-        }
-
-        function escapeHtml(text) {
-            return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-        }
-
-        document.getElementById("reviewForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const msg = document.getElementById("formMsg");
-            const content = document.getElementById("reviewContent").value.trim();
-            if (!selectedRating) { msg.textContent = "請先選擇評分"; msg.className = "form-msg error"; return; }
-            if (!content) { msg.textContent = "請填寫評論內容"; msg.className = "form-msg error"; return; }
-
-            msg.textContent = "送出中…"; msg.className = "form-msg";
-            try {
-                const res = await fetch("/api/reviews", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ content, rating: selectedRating })
-                });
-                if (res.ok) {
-                    msg.textContent = "感謝您的評論！";
-                    msg.className = "form-msg success";
-                    document.getElementById("reviewContent").value = "";
-                    selectedRating = null;
-                    stars.forEach(s => s.classList.remove("selected"));
-                    ratingLabel.textContent = "請選擇評分";
-                    loadReviews();
-                } else {
-                    const data = await res.json();
-                    msg.textContent = data.error || "送出失敗，請再試一次";
-                    msg.className = "form-msg error";
-                }
-            } catch (e) {
-                msg.textContent = "網路錯誤，請再試一次";
-                msg.className = "form-msg error";
-            }
-        });
-
-        loadReviews();
-    </script>
 </body>
 </html>
