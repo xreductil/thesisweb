@@ -1,6 +1,8 @@
 import os
 import secrets
-import psycopg2
+import ssl
+from urllib.parse import urlparse
+import pg8000.dbapi as pg
 from flask import Flask, request, jsonify, send_from_directory, session, redirect, url_for
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -14,10 +16,21 @@ def get_db():
     db_url = os.environ.get("DATABASE_URL", "")
     if not db_url:
         raise RuntimeError("DATABASE_URL 未設定")
-    if "sslmode" not in db_url:
-        connector = "&" if "?" in db_url else "?"
-        db_url += connector + "sslmode=require"
-    return psycopg2.connect(db_url)
+    parsed = urlparse(db_url)
+    kwargs = dict(
+        host=parsed.hostname,
+        port=parsed.port or 5432,
+        database=parsed.path.lstrip("/"),
+        user=parsed.username,
+        password=parsed.password,
+    )
+    try:
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        return pg.connect(**kwargs, ssl_context=ssl_context)
+    except Exception:
+        return pg.connect(**kwargs)
 
 def admin_required(f):
     from functools import wraps
@@ -67,47 +80,53 @@ def admin_check():
 
 @app.route("/api/reviews", methods=["GET"])
 def get_reviews():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT id, content, rating, created_at FROM reviews WHERE visible = TRUE ORDER BY created_at DESC"
-    )
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-    reviews = [
-        {
-            "id": r[0],
-            "content": r[1],
-            "rating": r[2],
-            "created_at": r[3].strftime("%Y-%m-%d"),
-        }
-        for r in rows
-    ]
-    return jsonify(reviews)
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT id, content, rating, created_at FROM reviews WHERE visible = TRUE ORDER BY created_at DESC"
+        )
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        reviews = [
+            {
+                "id": r[0],
+                "content": r[1],
+                "rating": r[2],
+                "created_at": r[3].strftime("%Y-%m-%d"),
+            }
+            for r in rows
+        ]
+        return jsonify(reviews)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/api/reviews", methods=["POST"])
 def add_review():
-    data = request.get_json()
-    content = (data.get("content") or "").strip()
-    rating = data.get("rating")
+    try:
+        data = request.get_json()
+        content = (data.get("content") or "").strip()
+        rating = data.get("rating")
 
-    if not content:
-        return jsonify({"error": "請填寫評論內容"}), 400
-    if rating is None or not isinstance(rating, int) or not (1 <= rating <= 5):
-        return jsonify({"error": "請選擇評分 (1-5)"}), 400
+        if not content:
+            return jsonify({"error": "請填寫評論內容"}), 400
+        if rating is None or not isinstance(rating, int) or not (1 <= rating <= 5):
+            return jsonify({"error": "請選擇評分 (1-5)"}), 400
 
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO reviews (content, rating) VALUES (%s, %s) RETURNING id",
-        (content, rating),
-    )
-    new_id = cur.fetchone()[0]
-    conn.commit()
-    cur.close()
-    conn.close()
-    return jsonify({"success": True, "id": new_id}), 201
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO reviews (content, rating) VALUES (%s, %s) RETURNING id",
+            (content, rating),
+        )
+        new_id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"success": True, "id": new_id}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # --- Admin reviews API ---
 
