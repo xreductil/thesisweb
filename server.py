@@ -11,7 +11,13 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", secrets.token_hex(32))
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin")
 
 def get_db():
-    return psycopg2.connect(os.environ["DATABASE_URL"])
+    db_url = os.environ.get("DATABASE_URL", "")
+    if not db_url:
+        raise RuntimeError("DATABASE_URL 未設定")
+    if "sslmode" not in db_url:
+        connector = "&" if "?" in db_url else "?"
+        db_url += connector + "sslmode=require"
+    return psycopg2.connect(db_url)
 
 def admin_required(f):
     from functools import wraps
