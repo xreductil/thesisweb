@@ -3,7 +3,9 @@ import secrets
 import psycopg2
 from flask import Flask, request, jsonify, send_from_directory, session, redirect, url_for
 
-app = Flask(__name__, static_folder=".", static_url_path="")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+app = Flask(__name__, static_folder=BASE_DIR, static_url_path="")
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", secrets.token_hex(32))
 
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin")
@@ -24,17 +26,17 @@ def admin_required(f):
 
 @app.route("/")
 def index():
-    return send_from_directory(".", "index.html")
+    return send_from_directory(BASE_DIR, "index.html")
 
 @app.route("/admin")
 def admin_page():
     if not session.get("admin_logged_in"):
-        return send_from_directory(".", "admin-login.html")
-    return send_from_directory(".", "admin.html")
+        return send_from_directory(BASE_DIR, "admin-login.html")
+    return send_from_directory(BASE_DIR, "admin.html")
 
 @app.route("/<path:filename>")
 def static_files(filename):
-    return send_from_directory(".", filename)
+    return send_from_directory(BASE_DIR, filename)
 
 # --- Auth ---
 
