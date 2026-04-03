@@ -4,10 +4,6 @@
   ],
   "routes": [
     {
-      "src": "^/(.*\\.(png|jpg|jpeg|svg|css|js))$",
-      "dest": "/$1"
-    },
-    {
       "src": "^/api/(.*)$",
       "dest": "server.py"
     },
