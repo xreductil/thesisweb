@@ -3,6 +3,17 @@
     { "src": "server.py", "use": "@vercel/python" }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "server.py" }
+    {
+      "src": "^/(.*\\.(png|jpg|jpeg|svg|css|js))$",
+      "dest": "/$1"
+    },
+    {
+      "src": "^/api/(.*)$",
+      "dest": "server.py"
+    },
+    {
+      "src": "^/(.*)$",
+      "dest": "server.py"
+    }
   ]
 }
