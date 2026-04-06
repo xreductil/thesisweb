@@ -187,6 +187,38 @@
     background: #34495e;
 }
 
+.hero-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.hero-actions .cta-button {
+    flex: 0 1 auto;
+    min-width: 170px;
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.button-row .cta-button {
+    margin: 0;
+    flex: 0 1 auto;
+    min-width: 170px;
+}
+
+.button-row {
+    text-align: center;
+}
+
 @media (max-width: 768px) {
     .process-grid {
         grid-template-columns: 1fr;
@@ -198,6 +230,17 @@
     
     .process-section h2, .features-section h2, .credential-section h2, .contact-cta h2 {
         font-size: 1.5rem;
+    }
+
+    .hero-actions {
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+    }
+
+    .hero-actions .cta-button {
+        min-width: auto;
+        padding: 0.85rem 1.2rem;
+        font-size: 0.95rem;
     }
 }
 
@@ -514,4 +557,15 @@
         transform: rotate(90deg);
         margin: 0;
     }
+}
+
+.button-row .cta-button {
+    display: inline-block !important;
+    width: auto !important;
+    flex: 0 1 auto;
+    min-width: 170px;
+}
+
+.button-row {
+    justify-content: center;
 }

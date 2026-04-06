@@ -34,9 +34,9 @@
                 <p class="hero-tagline">從題目發想、研究架構到撰寫修訂，提供一對一諮詢與分階段協助</p>
                 <p class="hero-tagline" style="margin-top: 1rem; font-size: 1rem;">不轉介、非外包，由顧問直接評估與回覆</p>
                 <p class="hero-tagline" style="margin-top: 0.5rem; font-size: 1rem;">提供單次諮詢、章節協助或完整陪跑</p>
-                <div style="margin-top: 2rem;">
-                    <a href="thesis-form.html" class="cta-button" style="background: #d3d3d3; color: #333333; margin: 0.5rem;">立即免費諮詢</a>
-                    <a href="thesis-faq.html" class="cta-button" style="background: #d3d3d3; color: #333333; margin: 0.5rem;">先看常見問題（FAQ）</a>
+                <div class="hero-actions">
+                    <a href="thesis-form.html" class="cta-button" style="background: #d3d3d3; color: #333333;">立即免費諮詢</a>
+                    <a href="thesis-faq.html" class="cta-button" style="background: #d3d3d3; color: #333333;">先看常見問題（FAQ）</a>
                 </div>
             </div>
         </section>
@@ -88,11 +88,11 @@
                 </div>
             </div>
 
-            <div style="text-align: center; margin-top: 3rem;">
-                <a href="thesis-form.html" class="cta-button" style="background: #d3d3d3; color: #333333; margin: 0.5rem;">我想先評估方向</a>
-                <a href="https://line.me/ti/p/grace843286" target="_blank" class="cta-button" style="background: #d3d3d3; color: #333333; margin: 0.5rem;">先聊聊我的研究狀況</a>
-                <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">提供單次諮詢、章節協助或完整陪跑</p>
+            <div class="button-row" style="margin-top: 3rem;">
+                <a href="thesis-form.html" class="cta-button" style="background: #d3d3d3; color: #333333;">我想先評估方向</a>
+                <a href="https://line.me/ti/p/grace843286" target="_blank" class="cta-button" style="background: #d3d3d3; color: #333333;">先聊聊我的研究狀況</a>
             </div>
+            <p style="font-size: 0.9rem; color: #666; margin-top: 1rem; text-align: center;">提供單次諮詢、章節協助或完整陪跑</p>
         </section>
 
         <section class="process-section" id="service-flow" style="background: #f9f9f9;">
@@ -142,7 +142,7 @@
                     <p style="text-align: left; margin-top: 1rem;">版權獨立歸予同學，結案後刪除相關資料，不留資訊，彷彿同學不曾委託。</p>
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 3rem;">
+            <div class="button-row" style="margin-top: 3rem;">
                 <a href="thesis-form.html" class="cta-button" style="background: #d3d3d3; color: #333333; margin: 0.5rem;">傳需求給我看看</a>
                 <a href="thesis-faq.html" class="cta-button" style="background: #d3d3d3; color: #333333; margin: 0.5rem;">先看常見問題</a>
             </div>
@@ -268,18 +268,62 @@
                     this.classList.toggle('open');
                     navBar.classList.toggle('open');
                 });
+                
+                // 点击菜单项后关闭菜单
+                const navLinks = navMenu.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        const href = this.getAttribute('href');
+                        const linkUrl = new URL(href, location.href);
+                        // 只有相同頁面且帶 hash 的連結才實現平滑滾動
+                        if (linkUrl.hash && (href.startsWith('#') || (linkUrl.pathname === location.pathname && linkUrl.search === location.search))) {
+                            e.preventDefault();
+                            const targetId = linkUrl.hash.substring(1);
+                            const target = document.getElementById(targetId);
+                            if (target) {
+                                smoothScroll(target, 800); // 800ms 滾動時間
+                            }
+                        }
+                        navMenu.classList.remove('active');
+                        navToggle.classList.remove('open');
+                        navBar.classList.remove('open');
+                    });
+                });
+            }
+            
+            // 平滑滚动函数
+            function smoothScroll(target, duration) {
+                const start = window.scrollY;
+                const targetPosition = target.getBoundingClientRect().top + start - 80; // 80px 是 header 高度
+                const distance = targetPosition - start;
+                let currentTime = 0;
+                
+                function ease(t) {
+                    // easeInOutQuad 缓动函数
+                    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+                }
+                
+                function animateScroll() {
+                    currentTime += 16; // 约60fps
+                    const progress = Math.min(currentTime / duration, 1);
+                    window.scrollTo(0, start + distance * ease(progress));
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animateScroll);
+                    }
+                }
+                
+                animateScroll();
             }
         });
     </script>
 
     <footer>
         <h3>立即諮詢</h3>
-        <div style="margin: 2rem 0;">
-            <a href="https://line.me/ti/p/grace843286" target="_blank" class="cta-button" style="background: #06C755; color: white; margin: 0.5rem; display: inline-block;">💬 加入 LINE 諮詢</a>
-        </div>
-        <div style="margin: 1rem 0;">
-            <a href="tel:0906843286" class="cta-button" style="background: #d3d3d3; color: #333333; margin: 0.5rem; display: inline-block; padding: 0.8rem 2rem; font-size: 1rem;">📱 撥打電話</a>
-            <a href="thesis-form.html" class="cta-button" style="background: #d3d3d3; color: #333333; margin: 0.5rem; display: inline-block; padding: 0.8rem 2rem; font-size: 1rem;">📝 填寫表單</a>
+        <div class="button-row" style="margin: 2rem 0 1rem;">
+            <a href="https://line.me/ti/p/grace843286" target="_blank" class="cta-button" style="background: #06C755; color: white; margin: 0.5rem;">💬 加入 LINE 諮詢</a>
+            <a href="tel:0906843286" class="cta-button" style="background: #d3d3d3; color: #333333; margin: 0.5rem; padding: 0.8rem 2rem; font-size: 1rem;">📱 撥打電話</a>
+            <a href="thesis-form.html" class="cta-button" style="background: #d3d3d3; color: #333333; margin: 0.5rem; padding: 0.8rem 2rem; font-size: 1rem;">📝 填寫表單</a>
         </div>
         <p style="margin-top: 2rem;">&copy; 2026 Y.H.Kao All rights reserved.</p>
     </footer>

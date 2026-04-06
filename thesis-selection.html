@@ -69,6 +69,52 @@
                     this.classList.toggle('open');
                     navBar.classList.toggle('open');
                 });
+                
+                // 点击菜单项后关闭菜单
+                const navLinks = navMenu.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        const href = this.getAttribute('href');
+                        const linkUrl = new URL(href, location.href);
+                        // 只有相同頁面且帶 hash 的連結才實現平滑滚动
+                        if (linkUrl.hash && (href.startsWith('#') || (linkUrl.pathname === location.pathname && linkUrl.search === location.search))) {
+                            e.preventDefault();
+                            const targetId = linkUrl.hash.substring(1);
+                            const target = document.getElementById(targetId);
+                            if (target) {
+                                smoothScroll(target, 800); // 800ms 滚动时间
+                            }
+                        }
+                        navMenu.classList.remove('active');
+                        navToggle.classList.remove('open');
+                        navBar.classList.remove('open');
+                    });
+                });
+                
+                // 平滑滚动函数
+                function smoothScroll(target, duration) {
+                    const start = window.scrollY;
+                    const targetPosition = target.getBoundingClientRect().top + start - 80; // 80px 是 header 高度
+                    const distance = targetPosition - start;
+                    let currentTime = 0;
+                    
+                    function ease(t) {
+                        // easeInOutQuad 缓动函数
+                        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+                    }
+                    
+                    function animateScroll() {
+                        currentTime += 16; // 约60fps
+                        const progress = Math.min(currentTime / duration, 1);
+                        window.scrollTo(0, start + distance * ease(progress));
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animateScroll);
+                        }
+                    }
+                    
+                    animateScroll();
+                }
             }
         });
     </script>
