@@ -9,8 +9,14 @@
 </head>
 <body>
     <header>
-        <nav>
-            <ul>
+        <nav class="nav-bar">
+            <div class="nav-brand">論文指導</div>
+            <button class="nav-toggle" aria-label="切換選單">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
                 <li><a href="thesis.html">論文指導</a></li>
                 <li><a href="thesis.html#service-flow">論文寫作委託</a></li>
                 <li><a href="thesis-form.html">委託資料填寫</a></li>
@@ -51,6 +57,21 @@
             </div>
         </section>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navToggle = document.querySelector('.nav-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            const navBar = document.querySelector('.nav-bar');
+            if (navToggle && navMenu && navBar) {
+                navToggle.addEventListener('click', function () {
+                    navMenu.classList.toggle('active');
+                    this.classList.toggle('open');
+                    navBar.classList.toggle('open');
+                });
+            }
+        });
+    </script>
 
     <footer>
         <h3>立即諮詢</h3>

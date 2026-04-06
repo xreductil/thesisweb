@@ -9,8 +9,14 @@
 </head>
 <body>
     <header>
-        <nav>
-            <ul>
+        <nav class="nav-bar">
+            <div class="nav-brand">論文指導</div>
+            <button class="nav-toggle" aria-label="切換選單">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
                 <li><a href="thesis.html">論文指導</a></li>
                 <li><a href="thesis.html#service-flow">論文寫作委託</a></li>
                 <li><a href="thesis-form.html">委託資料填寫</a></li>
@@ -32,7 +38,7 @@
             <h2>常見問題與諮詢說明</h2>
             
             <div class="faq-container">
-                <div class="faq-item">
+                <div class="faq-item open">
                     <h3>Q1: 如果目前沒有想法、也還沒定題目怎麼辦？</h3>
                     <p>很多人一開始都還在摸索方向。你可以先提供科系、課程要求、想研究的主題範圍，在了解您的背景與目前狀況後，我們可免費提供一次論文題目建議，供您與指導教授討論。</p>
                     <p style="margin-top: 1rem;">題目建議內容將包含：</p>
@@ -136,5 +142,29 @@
         <p>📱 電話: 0906843286</p>
         <p>&copy; 2026 Y.H.Kao All rights reserved.</p>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navToggle = document.querySelector('.nav-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', function () {
+                    navMenu.classList.toggle('active');
+                    this.classList.toggle('open');
+                });
+            }
+
+            document.querySelectorAll('.faq-item h3').forEach(function (heading) {
+                heading.addEventListener('click', function () {
+                    const item = this.closest('.faq-item');
+                    if (item) item.classList.toggle('open');
+                });
+            });
+
+            const firstFaq = document.querySelector('.faq-item');
+            if (firstFaq) {
+                firstFaq.classList.add('open');
+            }
+        });
+    </script>
 </body>
 </html>

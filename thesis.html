@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>論文指導 - 高育萱</title>
+    <title>論文指導</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="thesis-style.css">
 </head>
 <body>
     <header>
-        <nav>
-            <ul>
+        <nav class="nav-bar">
+            <div class="nav-brand">論文指導</div>
+            <button class="nav-toggle" aria-label="切換選單">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
                 <li><a href="thesis.html">論文指導</a></li>
                 <li><a href="thesis.html#service-flow">論文寫作委託</a></li>
                 <li><a href="thesis-form.html">委託資料填寫</a></li>
@@ -41,7 +47,7 @@
             <div style="text-align: center; margin-bottom: 3rem;">
                 <img src="service-features.png" alt="服務特色圖" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             </div>
-            <div class="process-grid" style="grid-template-columns: repeat(5, 1fr); gap: 1.5rem;">
+            <div class="process-grid">
                 <div class="process-item">
                     <div class="process-number">1</div>
                     <h3>一對一研究陪跑</h3>
@@ -250,6 +256,20 @@
         });
 
         loadReviews();
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navToggle = document.querySelector('.nav-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            const navBar = document.querySelector('.nav-bar');
+            if (navToggle && navMenu && navBar) {
+                navToggle.addEventListener('click', function () {
+                    navMenu.classList.toggle('active');
+                    this.classList.toggle('open');
+                    navBar.classList.toggle('open');
+                });
+            }
+        });
     </script>
 
     <footer>
