@@ -1,6 +1,7 @@
 import os
 import secrets
 import psycopg2
+from psycopg2 import errors
 import jwt
 from datetime import datetime, timedelta, timezone
 from functools import wraps
@@ -14,6 +15,20 @@ JWT_SECRET = os.environ.get("JWT_SECRET", secrets.token_hex(32))
 
 def get_db():
     return psycopg2.connect(os.environ["DATABASE_URL"])
+
+def ensure_reviews_table(conn):
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS reviews (
+            id SERIAL PRIMARY KEY,
+            content TEXT NOT NULL,
+            rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+            visible BOOLEAN NOT NULL DEFAULT TRUE,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+    cur.close()
 
 def admin_required(f):
     from functools import wraps
@@ -76,12 +91,30 @@ def admin_check():
 
 @app.route("/api/reviews", methods=["GET"])
 def get_reviews():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT id, content, rating, created_at FROM reviews WHERE visible = TRUE ORDER BY created_at DESC")
-    rows = cur.fetchall()
-    cur.close(); conn.close()
-    return jsonify([{"id": r[0], "content": r[1], "rating": r[2], "created_at": r[3].strftime("%Y-%m-%d")} for r in rows])
+    try:
+        conn = get_db()
+    except KeyError:
+        return jsonify([])
+    except psycopg2.OperationalError:
+        return jsonify([])
+
+    try:
+        cur = conn.cursor()
+        try:
+            cur.execute("SELECT id, content, rating, created_at FROM reviews WHERE visible = TRUE ORDER BY created_at DESC")
+        except errors.UndefinedTable:
+            conn.rollback()
+            ensure_reviews_table(conn)
+            return jsonify([])
+
+        rows = cur.fetchall()
+        return jsonify([{"id": r[0], "content": r[1], "rating": r[2], "created_at": r[3].strftime("%Y-%m-%d")} for r in rows])
+    finally:
+        try:
+            cur.close()
+        except Exception:
+            pass
+        conn.close()
 
 @app.route("/api/reviews", methods=["POST"])
 def add_review():
@@ -93,6 +126,7 @@ def add_review():
     if rating is None or not isinstance(rating, int) or not (1 <= rating <= 5):
         return jsonify({"error": "請選擇評分 (1-5)"}), 400
     conn = get_db()
+    ensure_reviews_table(conn)
     cur = conn.cursor()
     cur.execute("INSERT INTO reviews (content, rating) VALUES (%s, %s) RETURNING id", (content, rating))
     new_id = cur.fetchone()[0]

@@ -201,7 +201,15 @@
             const list = document.getElementById("reviewsList");
             try {
                 const res = await fetch("/api/reviews");
+                if (!res.ok) {
+                    throw new Error(`Failed to load reviews: ${res.status}`);
+                }
+
                 const reviews = await res.json();
+                if (!Array.isArray(reviews)) {
+                    throw new Error("Invalid reviews payload");
+                }
+
                 if (reviews.length === 0) {
                     list.innerHTML = "<p class='no-reviews'>還沒有評論，成為第一個留言的人！</p>";
                     return;

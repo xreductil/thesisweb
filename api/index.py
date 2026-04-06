@@ -32,6 +32,21 @@ def get_db():
         return pg.connect(**kwargs)
 
 
+def ensure_reviews_table(conn):
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS reviews (
+            id SERIAL PRIMARY KEY,
+            content TEXT NOT NULL,
+            rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+            visible BOOLEAN NOT NULL DEFAULT TRUE,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+    cur.close()
+
+
 def admin_required(f):
     from functools import wraps
     @wraps(f)
@@ -66,13 +81,24 @@ def admin_check():
 def get_reviews():
     try:
         conn = get_db()
+    except RuntimeError:
+        return jsonify([])
+    except Exception:
+        return jsonify([])
+
+    try:
         cur = conn.cursor()
-        cur.execute(
-            "SELECT id, content, rating, created_at FROM reviews WHERE visible = TRUE ORDER BY created_at DESC"
-        )
+        try:
+            cur.execute(
+                "SELECT id, content, rating, created_at FROM reviews WHERE visible = TRUE ORDER BY created_at DESC"
+            )
+        except Exception as e:
+            if "reviews" in str(e).lower() and ("does not exist" in str(e).lower() or "undefined" in str(e).lower()):
+                conn.rollback()
+                ensure_reviews_table(conn)
+                return jsonify([])
+            raise
         rows = cur.fetchall()
-        cur.close()
-        conn.close()
         reviews = [
             {
                 "id": r[0],
@@ -85,6 +111,12 @@ def get_reviews():
         return jsonify(reviews)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    finally:
+        try:
+            cur.close()
+        except Exception:
+            pass
+        conn.close()
 
 
 @app.route("/api/reviews", methods=["POST"])
@@ -100,6 +132,7 @@ def add_review():
             return jsonify({"error": "請選擇評分 (1-5)"}), 400
 
         conn = get_db()
+        ensure_reviews_table(conn)
         cur = conn.cursor()
         cur.execute(
             "INSERT INTO reviews (content, rating) VALUES (%s, %s) RETURNING id",

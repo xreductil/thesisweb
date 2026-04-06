@@ -37,6 +37,21 @@ nav {
     letter-spacing: 0.05em;
 }
 
+@media (min-width: 993px) {
+    nav {
+        justify-content: center;
+    }
+
+    .nav-brand {
+        display: none;
+    }
+
+    .nav-menu {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
 .nav-toggle {
     display: none;
     background: none;
