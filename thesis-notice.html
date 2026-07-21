@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>論文諮詢前須知 - 論文指導網</title>
+    <link rel="icon" type="image/png" href="ChatGPT Image 2026年7月21日 下午09_46_25.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="thesis-style.css">
 </head>
 <body>
     <header>
         <nav class="nav-bar">
-            <div class="nav-brand">論文指導</div>
+            <a href="thesis.html" class="nav-brand"><img src="ChatGPT Image 2026年7月21日 下午09_46_25.png" alt="論文指導 logo"></a>
             <button class="nav-toggle" aria-label="切換選單">
                 <span></span>
                 <span></span>
@@ -19,10 +20,11 @@
             <ul class="nav-menu">
                 <li><a href="thesis.html">論文指導</a></li>
                 <li><a href="thesis.html#service-flow">論文寫作委託</a></li>
-                <li><a href="thesis-form.html">委託資料填寫</a></li>
-                <li><a href="thesis-faq.html">常見問題與諮詢說明</a></li>
+                <li><a href="thesis-form.html?scroll=consultation-form-title">委託資料填寫</a></li>
+                <li><a href="thesis-faq.html?scroll=faq-title">常見問題與諮詢說明</a></li>
                 <li><a href="thesis.html#service-features">慎選寫作團隊的重要</a></li>
                 <li><a href="thesis.html#reviews">客戶評價</a></li>
+                <li><a href="#contact-footer">聯絡我們</a></li>
             </ul>
         </nav>
     </header>
@@ -174,11 +176,28 @@
         });
     </script>
 
-    <footer>
-        <h3>立即諮詢</h3>
-        <p>💬 LINE: grace843286</p>
-        <p>📱 電話: 0906843286</p>
-        <p>&copy; 2026 Y.H.Kao All rights reserved.</p>
+    <footer id="contact-footer" class="thesis-footer">
+        <div class="footer-inner">
+            <div class="footer-column footer-brand-col">
+                <h3>論文指導</h3>
+                <ul class="footer-links">
+                    <li><a href="thesis.html">論文指導</a></li>
+                    <li><a href="thesis.html#service-flow">論文寫作委託</a></li>
+                    <li><a href="thesis-form.html?scroll=consultation-form-title">委託資料填寫</a></li>
+                    <li><a href="thesis-faq.html?scroll=faq-title">常見問題與諮詢說明</a></li>
+                    <li><a href="thesis.html#service-features">慎選寫作團隊的重要</a></li>
+                    <li><a href="thesis.html#reviews">客戶評價</a></li>
+                </ul>
+            </div>
+            <div class="footer-column footer-contact-col">
+                <h3>聯絡我們</h3>
+                <p>服務時間：全年無休 即時回覆</p>
+                <p>LINE：<a href="https://line.me/ti/p/grace843286" target="_blank" rel="noopener">grace843286</a></p>
+                <p>電話：<a href="tel:0906843286">0906-843-286</a></p>
+                <p>表單：<a href="thesis-form.html?scroll=consultation-form-title">填寫委託資料</a></p>
+            </div>
+        </div>
+        <p class="footer-copy">&copy; 2026 Y.H.Kao All rights reserved. Design by A.Q. webdesign</p>
     </footer>
 </body>
 </html>

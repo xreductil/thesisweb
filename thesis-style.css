@@ -6,22 +6,22 @@
 
 /* 論文指導頁面的 Hero 區域背景 */
 #hero.with-bg-image {
-    background-image: url('Gemini_Generated_Image_84jw5d84jw5d84jw.png');
+    background-image: url('ChatGPT Image 2026年7月21日 上午12_23_21.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    max-width: none;
+    min-height: calc(100vh - 74px);
+    min-height: calc(100svh - 74px);
+    padding: 0 2rem;
+    width: 100vw;
 }
 
 #hero.with-bg-image::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.6);
-    z-index: 1;
+    display: none;
 }
+
+
 
 #hero.with-bg-image .hero-content {
     position: relative;
@@ -44,11 +44,15 @@
     background: #ffffff;
 }
 
-.process-section h2, .features-section h2, .credential-section h2, .contact-cta h2 {
+.process-section h2, .process-section .section-title, .features-section h2, .credential-section h2, .contact-cta h2 {
     text-align: center;
     font-size: 2rem;
     margin-bottom: 3rem;
     color: #333333;
+}
+
+.section-title {
+    scroll-margin-top: 90px;
 }
 
 .process-grid {
@@ -192,13 +196,61 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: 1.6rem;
     flex-wrap: wrap;
+}
+
+#hero.with-bg-image .hero-actions {
+    transform: translateY(200px);
 }
 
 .hero-actions .cta-button {
     flex: 0 1 auto;
     min-width: 170px;
+}
+
+#hero.with-bg-image .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-width: 270px;
+    min-height: 70px;
+    padding: 1rem 2.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
+    box-shadow: 0 14px 34px rgba(67, 58, 42, 0.12);
+    font-size: 1.08rem;
+    letter-spacing: 0.08em;
+}
+
+#hero.with-bg-image .hero-cta svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: 0 0 auto;
+}
+
+#hero.with-bg-image .hero-cta-primary {
+    background: #73785a;
+    color: #ffffff;
+}
+
+#hero.with-bg-image .hero-cta-secondary {
+    background: rgba(255, 252, 246, 0.88);
+    color: #4b453b;
+}
+
+#hero.with-bg-image .hero-cta-primary:hover {
+    background: #62674d;
+}
+
+#hero.with-bg-image .hero-cta-secondary:hover {
+    background: #ffffff;
 }
 
 .button-row {
@@ -237,10 +289,35 @@
         gap: 0.5rem;
     }
 
+    #hero.with-bg-image .hero-actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        transform: translateY(230px);
+        width: calc(100vw - 2rem);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     .hero-actions .cta-button {
-        min-width: auto;
-        padding: 0.85rem 1.2rem;
-        font-size: 0.95rem;
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 0.85rem 0.6rem;
+        font-size: 0.9rem;
+    }
+
+    #hero.with-bg-image .hero-cta {
+        width: auto;
+        min-width: 0;
+        min-height: 58px;
+        gap: 0.45rem;
+        padding: 0.8rem 0.55rem;
+        font-size: 0.84rem;
+        letter-spacing: 0;
+    }
+
+    #hero.with-bg-image .hero-cta svg {
+        width: 18px;
+        height: 18px;
     }
 }
 
@@ -299,8 +376,9 @@
     }
 
     #hero {
-        min-height: auto;
-        padding: 4rem 0.75rem;
+        min-height: calc(100vh - 90px);
+        min-height: calc(100svh - 90px);
+        padding: 0 0.75rem;
     }
 
     #hero h1 {
@@ -339,6 +417,21 @@
         margin: 0.5rem 0;
     }
 
+    #hero.with-bg-image .hero-actions .hero-cta {
+        display: inline-flex;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        margin: 0;
+    }
+
+    #hero.with-bg-image .hero-actions .hero-cta span {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        line-height: 1.25;
+    }
+
     .review-form-wrap,
     .reviews-list,
     .faq-container,
@@ -366,7 +459,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     nav ul {
         gap: 0.75rem;
     }
@@ -376,7 +469,13 @@
     }
 
     #hero {
-        padding: 3rem 0.75rem;
+        padding: 0 0.75rem;
+    }
+
+    #hero.with-bg-image .hero-actions {
+        grid-template-columns: 1fr;
+        width: min(82vw, 280px);
+        gap: 0.75rem;
     }
 
     #hero h1 {
@@ -568,4 +667,83 @@
 
 .button-row {
     justify-content: center;
+}
+
+.thesis-footer {
+    background: #f9f9f9;
+    color: #111111;
+    padding: 4rem 2rem 2rem;
+    border-top: 1px solid #eeeeee;
+    text-align: left;
+}
+
+.thesis-footer .footer-inner {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.thesis-footer .footer-column h3 {
+    margin: 0 0 1.8rem;
+    color: #111111;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.thesis-footer .footer-column h3::after {
+    content: "";
+    display: block;
+    width: 44px;
+    height: 4px;
+    margin-top: 1rem;
+    background: #e2e2e2;
+}
+
+.thesis-footer .footer-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.thesis-footer .footer-links li {
+    border-bottom: 1px solid #ececec;
+}
+
+.thesis-footer .footer-links li:last-child {
+    border-bottom-width: 4px;
+}
+
+.thesis-footer a {
+    color: #111111;
+    text-decoration: none;
+}
+
+.thesis-footer .footer-links a {
+    display: block;
+    padding: 0.85rem 0;
+    font-size: 1.05rem;
+}
+
+.thesis-footer .footer-contact-col p {
+    margin: 0 0 1.6rem;
+    color: #222222;
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.thesis-footer .footer-copy {
+    max-width: 1200px;
+    margin: 3rem auto 0;
+    color: #666666;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .thesis-footer .footer-inner {
+        grid-template-columns: 1fr;
+        gap: 2.2rem;
+    }
 }
