@@ -1,10 +1,10 @@
 __pycache__
 *.pyc
-# 保留網站用圖片，避免上傳時缺圖
-!service-features.png
-!service-flow.png
-!Gemini_Generated_Image_84jw5d84jw5d84jw.png
-!Gemini_Generated_Image_oruxtcoruxtcorux.png
+server.py
+main.py
+api
+requirements.txt
+pyproject.toml
 *.jpg
 *.jpeg
 *.gif

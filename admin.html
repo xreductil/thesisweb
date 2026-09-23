@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>評論管理後台</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png?v=20260721-3">
-    <link rel="icon" type="image/x-icon" href="./favicon.ico?v=20260721-3" sizes="any">
-    <link rel="shortcut icon" href="./favicon.ico?v=20260721-3">
-    <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=20260721-3">
+    <link rel="icon" type="image/webp" sizes="32x32" href="https://pub-0f1d8a52c1254c52a7ef1515ef60b41b.r2.dev/favicon.webp?v=20260721-3">
+    <link rel="apple-touch-icon" href="https://pub-0f1d8a52c1254c52a7ef1515ef60b41b.r2.dev/apple-touch-icon.webp?v=20260721-3">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -245,13 +243,20 @@
     </div>
 
     <script>
+        const API_BASE = "https://thesis-api.jinfeng8605.workers.dev";
         let allReviews = [];
         let currentFilter = "all";
         let pendingDeleteId = null;
 
+        function authHeaders(headers = {}) {
+            const token = localStorage.getItem("admin_token") || "";
+            return { ...headers, Authorization: "Bearer " + token };
+        }
+
         async function logout() {
-            await fetch("/api/admin/logout", { method: "POST" });
-            window.location.href = "/admin";
+            await fetch(API_BASE + "/api/admin/logout", { method: "POST", headers: authHeaders() });
+            localStorage.removeItem("admin_token");
+            window.location.href = "admin-login.html";
         }
 
         function setFilter(filter, btn) {
@@ -308,15 +313,15 @@
         }
 
         async function loadReviews() {
-            const res = await fetch("/api/admin/reviews");
-            if (res.status === 401) { window.location.href = "/admin"; return; }
+            const res = await fetch(API_BASE + "/api/admin/reviews", { headers: authHeaders() });
+            if (res.status === 401) { window.location.href = "admin-login.html"; return; }
             allReviews = await res.json();
             updateStats();
             renderReviews();
         }
 
         async function toggleReview(id) {
-            const res = await fetch(`/api/admin/reviews/${id}/toggle`, { method: "PATCH" });
+            const res = await fetch(API_BASE + "/api/admin/reviews/" + id + "/toggle", { method: "PATCH", headers: authHeaders() });
             if (res.ok) {
                 const data = await res.json();
                 const r = allReviews.find(x => x.id === id);
@@ -338,7 +343,7 @@
 
         async function confirmDelete() {
             if (!pendingDeleteId) return;
-            const res = await fetch(`/api/admin/reviews/${pendingDeleteId}`, { method: "DELETE" });
+            const res = await fetch(API_BASE + "/api/admin/reviews/" + pendingDeleteId, { method: "DELETE", headers: authHeaders() });
             if (res.ok) {
                 allReviews = allReviews.filter(r => r.id !== pendingDeleteId);
                 updateStats();

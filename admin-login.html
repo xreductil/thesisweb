@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>後台登入</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png?v=20260721-3">
-    <link rel="icon" type="image/x-icon" href="./favicon.ico?v=20260721-3" sizes="any">
-    <link rel="shortcut icon" href="./favicon.ico?v=20260721-3">
-    <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=20260721-3">
+    <link rel="icon" type="image/webp" sizes="32x32" href="https://pub-0f1d8a52c1254c52a7ef1515ef60b41b.r2.dev/favicon.webp?v=20260721-3">
+    <link rel="apple-touch-icon" href="https://pub-0f1d8a52c1254c52a7ef1515ef60b41b.r2.dev/apple-touch-icon.webp?v=20260721-3">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -79,6 +77,7 @@
         <p class="error-msg" id="errorMsg"></p>
     </div>
     <script>
+        const API_BASE = "https://thesis-api.jinfeng8605.workers.dev";
         document.getElementById("password").addEventListener("keydown", e => {
             if (e.key === "Enter") login();
         });
@@ -88,16 +87,19 @@
             const msg = document.getElementById("errorMsg");
             if (!password) { msg.textContent = "請輸入密碼"; return; }
 
-            const res = await fetch("/api/admin/login", {
+            const res = await fetch(API_BASE + "/api/admin/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ password })
             });
 
             if (res.ok) {
-                window.location.href = "/admin";
+                const data = await res.json();
+                localStorage.setItem("admin_token", data.token);
+                window.location.href = "admin.html";
             } else {
-                msg.textContent = "密碼錯誤，請重新輸入";
+                const data = await res.json().catch(() => ({}));
+                msg.textContent = data.error || "登入失敗，請重新輸入";
                 document.getElementById("password").value = "";
                 document.getElementById("password").focus();
             }

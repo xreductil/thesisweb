@@ -4,17 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>論文指導</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png?v=20260721-3">
-    <link rel="icon" type="image/x-icon" href="./favicon.ico?v=20260721-3" sizes="any">
-    <link rel="shortcut icon" href="./favicon.ico?v=20260721-3">
-    <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=20260721-3">
+    <link rel="icon" type="image/webp" sizes="32x32" href="https://pub-0f1d8a52c1254c52a7ef1515ef60b41b.r2.dev/favicon.webp?v=20260721-3">
+    <link rel="apple-touch-icon" href="https://pub-0f1d8a52c1254c52a7ef1515ef60b41b.r2.dev/apple-touch-icon.webp?v=20260721-3">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="thesis-style.css">
 </head>
 <body>
     <header>
         <nav class="nav-bar">
-            <a href="thesis.html" class="nav-brand"><img src="logoimage.png" alt="論文指導 logo"></a>
+            <a href="thesis.html" class="nav-brand"><img src="https://pub-0f1d8a52c1254c52a7ef1515ef60b41b.r2.dev/logoimage.webp" alt="論文指導 logo"></a>
             <button class="nav-toggle" aria-label="切換選單">
                 <span></span>
                 <span></span>
@@ -56,7 +54,7 @@
             <h2>服務特色</h2>
             <p style="text-align: center; color: #666; max-width: 800px; margin: 0 auto 3rem;">選擇專業、可靠的論文指導團隊，是確保論文品質的關鍵。</p>
             <div style="text-align: center; margin-bottom: 3rem;">
-                <img src="service-features.png" alt="服務特色圖" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <img src="https://pub-0f1d8a52c1254c52a7ef1515ef60b41b.r2.dev/service-features.webp" alt="服務特色圖" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             </div>
             <div class="process-grid">
                 <div class="process-item">
@@ -109,7 +107,7 @@
         <section class="process-section" id="service-flow" style="background: #f9f9f9;">
             <h2>服務流程</h2>
             <div style="text-align: center; margin-bottom: 3rem;">
-                <img src="service-flow.png" alt="服務流程圖" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <img src="https://pub-0f1d8a52c1254c52a7ef1515ef60b41b.r2.dev/service-flow.webp" alt="服務流程圖" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             </div>
             <div class="process-grid">
                 <div class="process-item">
@@ -187,6 +185,7 @@
     </section>
 
     <script>
+        const API_BASE = "https://thesis-api.jinfeng8605.workers.dev";
         let selectedRating = null;
 
         const stars = document.querySelectorAll("#starRating span");
@@ -211,7 +210,7 @@
         async function loadReviews() {
             const list = document.getElementById("reviewsList");
             try {
-                const res = await fetch("/api/reviews");
+                const res = await fetch(API_BASE + "/api/reviews");
                 if (!res.ok) {
                     throw new Error(`Failed to load reviews: ${res.status}`);
                 }
@@ -250,7 +249,7 @@
 
             msg.textContent = "送出中…"; msg.className = "form-msg";
             try {
-                const res = await fetch("/api/reviews", {
+                const res = await fetch(API_BASE + "/api/reviews", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ content, rating: selectedRating })
